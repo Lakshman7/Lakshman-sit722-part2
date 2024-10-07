@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-catalog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: book-catalog
+  template:
+    metadata:
+      labels:
+        app: book-catalog
+    spec:
+      containers:
+      - name: book-catalog
+        image: localhost:5000/book-catalog-image:latest  # Use the image from the local registry
+        imagePullPolicy: IfNotPresent  # Use the local image if available
+        ports:
+        - containerPort: 80
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://week6_ouft_user:ejRZHIezTduTE7SwNXiWz6llrjbDp3Nb@dpg-cs1slcdds78s73ba3tvg-a.singapore-postgres.render.com/week6_ouft"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: book-catalog-service
+spec:
+  selector:
+    app: book-catalog
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: NodePort
